@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../view_models/game_view_model.dart';
 
 class GameOverView extends StatelessWidget {
@@ -10,20 +11,22 @@ class GameOverView extends StatelessWidget {
     final viewModel = Provider.of<GameViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('遊戲結束')),
+      appBar: AppBar(title: Text('Game over')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('恭喜你完成所有關卡！', style: TextStyle(fontSize: 24)),
-            Text('總步數: ${viewModel.moveCount}', style: TextStyle(fontSize: 20)),
+            Text(
+              'Congratulations on completing all the levels!',
+              style: TextStyle(fontSize: 24),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 viewModel.resetGame();
                 Navigator.pop(context);
               },
-              child: Text('重新開始'),
+              child: Text('restart all'),
             ),
           ],
         ),

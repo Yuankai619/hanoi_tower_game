@@ -11,7 +11,12 @@ class LevelSelectView extends StatelessWidget {
     final viewModel = Provider.of<GameViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('選擇關卡')),
+      appBar: AppBar(
+        title: Text(
+          'choose level',
+          style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+        ),
+      ),
       body: ListView.builder(
         itemCount: viewModel.maxLevel,
         itemBuilder: (context, index) {
@@ -20,10 +25,16 @@ class LevelSelectView extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('關卡 $level'),
+                Text(
+                  'level $level',
+                  style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                ),
                 if (viewModel.currentLevel >= level &&
                     viewModel.moveRecord[level] > 0)
-                  Text('步數 ${viewModel.moveRecord[level]}'),
+                  Text(
+                    'least move count ${viewModel.moveRecord[level]}',
+                    style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                  ),
               ],
             ),
             enabled: level <= viewModel.unlockedLevels,

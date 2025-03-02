@@ -11,7 +11,10 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hanoi Tower Hell'),
+        title: Text(
+          'Hanoi Tower Hell',
+          style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.list),
@@ -33,8 +36,14 @@ class GameView extends StatelessWidget {
                 barrierDismissible: false, // 防止點擊外部關閉
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('完成此關'),
-                    content: Text('步數: ${viewModel.moveCount}'),
+                    title: Text(
+                      'Finish!',
+                      style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                    ),
+                    content: Text(
+                      'move count: ${viewModel.moveCount}',
+                      style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -42,7 +51,10 @@ class GameView extends StatelessWidget {
                           viewModel.isShowLevelComplete = false;
                           Navigator.of(context).pop();
                         },
-                        child: Text('重新開始遊戲'),
+                        child: Text(
+                          'restart',
+                          style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                        ),
                       ),
                       TextButton(
                         onPressed: () {
@@ -50,7 +62,10 @@ class GameView extends StatelessWidget {
                           Navigator.of(context).pop();
                           viewModel.nextLevel();
                         },
-                        child: Text('下一關'),
+                        child: Text(
+                          'next level',
+                          style: TextStyle(fontFamily: "RobotoMono-SemiBold"),
+                        ),
                       ),
                     ],
                   );
@@ -69,17 +84,19 @@ class GameView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '關卡: ${viewModel.currentLevel}',
+                          'level: ${viewModel.currentLevel}',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
+                            fontFamily: "RobotoMono-SemiBold",
                           ),
                         ),
                         Text(
-                          '步數: ${viewModel.moveCount}',
+                          'move count: ${viewModel.moveCount}',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
+                            fontFamily: "RobotoMono-SemiBold",
                           ),
                         ),
                       ],
@@ -105,8 +122,12 @@ class GameView extends StatelessWidget {
                   right: 0,
                   child: Center(
                     child: Text(
-                      '🔄 Tower change！',
-                      style: TextStyle(fontSize: 22, color: Colors.red),
+                      '🔄 Tower swap！',
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.red,
+                        fontFamily: "RobotoMono-SemiBold",
+                      ),
                     ),
                   ),
                 ),
@@ -183,7 +204,13 @@ class _TowerWidgetState extends State<TowerWidget>
                       color:
                           TowerWidget.diskColors[widget.tower.disks.first - 1],
                     ),
-                  Text(widget.tower.name, style: TextStyle(fontSize: 20)),
+                  Text(
+                    widget.tower.name,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: "RobotoMono-SemiBold",
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -251,12 +278,19 @@ class _TowerWidgetState extends State<TowerWidget>
                             opacity: _blinkController!,
                             child: Text(
                               widget.tower.name,
-                              style: TextStyle(fontSize: 20, color: Colors.red),
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.red,
+                                fontFamily: "RobotoMono-SemiBold",
+                              ),
                             ),
                           )
                           : Text(
                             widget.tower.name,
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: "RobotoMono-SemiBold",
+                            ),
                           ),
                 ),
               ],

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 import '../models/game_model.dart';
@@ -20,16 +21,19 @@ class GameViewModel extends ChangeNotifier {
 
   set isShowLevelComplete(bool state) => _gameModel.isShowLevelComplete = state;
 
-  void nextLevel() {
+  void nextLevel() async {
     _gameModel.nextLevel();
     notifyListeners();
   }
 
-  void moveDisk(String from, String to) {
+  Future<void> moveDisk(String from, String to) async {
     _gameModel.moveDisk(from, to);
+    final player = AudioPlayer();
+    await player.play(AssetSource('audios/fast-simple-chop.mp3'));
     if (_gameModel.isLevelComplete()) {
+      final player = AudioPlayer();
+      await player.play(AssetSource('audios/level-up.mp3'));
       _gameModel.isShowLevelComplete = true;
-
       if (_gameModel.currentLevel == _gameModel.maxLevel) {
         navigateToGameOver();
         notifyListeners();
