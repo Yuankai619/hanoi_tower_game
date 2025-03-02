@@ -119,18 +119,20 @@ class _TowerWidgetState extends State<TowerWidget>
           data: widget.tower,
           feedback: Material(
             color: Colors.transparent,
-            child: Column(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (widget.tower.disks.isNotEmpty)
-                  DiskWidget(
-                    disk: widget.tower.disks.first,
-                    color: TowerWidget.diskColors[widget.tower.disks.first],
-                  ),
-                SizedBox(height: 100),
-                Text(widget.tower.name, style: TextStyle(fontSize: 20)),
-              ],
+            child: Container(
+              width: 100, // 確保與 TowerWidget 宽度相同
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (widget.tower.disks.isNotEmpty)
+                    DiskWidget(
+                      disk: widget.tower.disks.first,
+                      color: TowerWidget.diskColors[widget.tower.disks.first - 1],
+                    ),
+                  Text(widget.tower.name, style: TextStyle(fontSize: 20)),
+                ],
+              ),
             ),
           ),
           onDragStarted: () {
@@ -149,75 +151,53 @@ class _TowerWidgetState extends State<TowerWidget>
           },
           child: Container(
             width: 100,
-            height: 400,
+            height: 250,
             color:
                 _isDragging
                     ? Colors.grey.withAlpha((0.3 * 255).toInt())
                     : Colors.transparent,
-            child:Transform.translate(
-              offset: Offset(0,-120),
-              child:Column(
+            child:Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Expanded(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                            bottom: 0, // 讓柱子靠近底部
-                            child: Container(
-                              width: 10,
-                              height: 200,
-                              color: Colors.grey,
-                            ),
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                         Container(
+                            width: 10,
+                            height: 220,
+                            color: Colors.grey,
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children:
-                            widget.tower.disks.map((disk) {
-                              return DiskWidget(
-                                disk: disk,
-                                color: TowerWidget.diskColors[disk - 1],
-                              );
-                            }).toList(),
-                          ),
-                          if (_isDragging &&
-                              _diskPosition != null &&
-                              widget.tower.disks.isNotEmpty)
-                            Positioned(
-                              bottom: _diskPosition!.dy,
-                              child: DiskWidget(
-                                disk: widget.tower.disks.first,
-                                color:
-                                TowerWidget.diskColors[widget.tower.disks.first -
-                                    1],
-                              ),
-                            ),
-
-                        ],
-
-                      ),
+                        // ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: widget.tower.disks.map((disk) {
+                            return DiskWidget(
+                              disk: disk,
+                              color: TowerWidget.diskColors[disk - 1],
+                            );
+                          }).toList(),
+                        ),
+                        // if (!_isDragging )
+                      ],
+                    ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    child:
-                    isShuffling
-                        ? FadeTransition(
-                      opacity: _blinkController!,
-                      child: Text(
-                        widget.tower.name,
-                        style: TextStyle(fontSize: 20, color: Colors.red),
-                      ),
-                    )
-                        : Text(
+                  isShuffling
+                      ? FadeTransition(
+                    opacity: _blinkController!,
+                    child: Text(
                       widget.tower.name,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, color: Colors.red),
                     ),
                   )
+                      : Text(
+                    widget.tower.name,
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ],
               )
 
-            )
+
 
           ),
         );
