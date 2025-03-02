@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'tower.dart';
 
 class GameModel {
@@ -9,7 +10,7 @@ class GameModel {
   Random random;
   int unlockedLevels;
   int shuffleCount;
-
+  bool isShuffling;
   GameModel({
     required this.towers,
     required this.currentLevel,
@@ -18,6 +19,7 @@ class GameModel {
     required this.random,
     required this.unlockedLevels,
     required this.shuffleCount,
+    required this.isShuffling,
   });
 
   void moveDisk(String from, String to) {
@@ -25,17 +27,19 @@ class GameModel {
     var toTower = towers.firstWhere((tower) => tower.name == to);
     print("fromTower: ${fromTower.disks}, ToTower: ${toTower.disks}");
     if (fromTower.disks.isNotEmpty &&
-        (toTower.disks.isEmpty || fromTower.disks.first < toTower.disks.first)) {
-      toTower.disks.insert(0,fromTower.disks.removeAt(0));
+        (toTower.disks.isEmpty ||
+            fromTower.disks.first < toTower.disks.first)) {
+      toTower.disks.insert(0, fromTower.disks.removeAt(0));
       moveCount++;
     }
-
   }
 
   bool isLevelComplete() {
     var targetTower = towers.firstWhere((tower) => tower.name == 'C');
     return targetTower.disks.length == currentLevel &&
-        targetTower.disks.every((disk) => disk == targetTower.disks.indexOf(disk) + 1);
+        targetTower.disks.every(
+          (disk) => disk == targetTower.disks.indexOf(disk) + 1,
+        );
   }
 
   void nextLevel() {

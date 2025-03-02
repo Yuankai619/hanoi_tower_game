@@ -1,12 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
-import 'view_models/game_view_model.dart';
+
 import 'models/game_model.dart';
+import 'models/tower.dart';
+import 'view_models/game_view_model.dart';
+import 'views/game_over_view.dart';
 import 'views/game_view.dart';
 import 'views/level_select_view.dart';
-import 'views/game_over_view.dart';
-import 'models/tower.dart';
 
 void main() {
   runApp(
@@ -25,6 +27,7 @@ void main() {
               random: Random(),
               unlockedLevels: 2,
               shuffleCount: 0,
+              isShuffling: false,
             ),
           ),
       child: MyApp(),

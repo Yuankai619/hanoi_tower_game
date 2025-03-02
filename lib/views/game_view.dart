@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_models/game_view_model.dart';
+
 import '../models/tower.dart';
+import '../view_models/game_view_model.dart';
 
 class GameView extends StatelessWidget {
   const GameView({super.key});
@@ -25,39 +26,59 @@ class GameView extends StatelessWidget {
               Navigator.pushNamed(context, '/game_over');
             });
           }
-          return Column(
+          return Stack(
             children: [
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('關卡: ${viewModel.currentLevel}', style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
-                    Text('步數: ${viewModel.moveCount}', style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
-                  ],
-                ),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '關卡: ${viewModel.currentLevel}',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '步數: ${viewModel.moveCount}',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children:
+                            viewModel.towers.map((tower) {
+                              return TowerWidget(tower: tower);
+                            }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              if (viewModel.shuffleCount > 0 && viewModel.shuffleCount <= 3)
+              if (viewModel.isShuffling)
                 Positioned(
-                  top: 50, // 固定位置
-                  child: Text(
-                    '🔄 柱子正在隨機交換！',
-                    style: TextStyle(fontSize: 18, color: Colors.red),
+                  top: 180,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Text(
+                      '🔄 Tower change！',
+                      style: TextStyle(fontSize: 22, color: Colors.red),
+                    ),
                   ),
                 ),
-              Expanded(
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: viewModel.towers.map((tower) {
-                      return TowerWidget(tower: tower);
-                    }).toList(),
-                  ),
-                ),
-              ),
             ],
           );
-
         },
       ),
     );
@@ -110,8 +131,6 @@ class _TowerWidgetState extends State<TowerWidget>
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<GameViewModel>(context);
-    final isShuffling =
-        viewModel.shuffleCount > 0 && viewModel.shuffleCount <= 3;
 
     return DragTarget<Tower>(
       builder: (context, accepted, rejected) {
@@ -128,7 +147,8 @@ class _TowerWidgetState extends State<TowerWidget>
                   if (widget.tower.disks.isNotEmpty)
                     DiskWidget(
                       disk: widget.tower.disks.first,
-                      color: TowerWidget.diskColors[widget.tower.disks.first - 1],
+                      color:
+                          TowerWidget.diskColors[widget.tower.disks.first - 1],
                     ),
                   Text(widget.tower.name, style: TextStyle(fontSize: 20)),
                 ],
@@ -152,64 +172,62 @@ class _TowerWidgetState extends State<TowerWidget>
           child: Container(
             width: 100,
             height: 300,
-              decoration: BoxDecoration(
-                color: _isDragging
-                    ? Colors.grey.withAlpha((0.3 * 255).toInt())
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            child:Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                         Container(
-                            width: 10,
-                            height: 200,
-                            color: Colors.grey,
-                          ),
-                        // ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: widget.tower.disks.map((disk) {
-                            return DiskWidget(
-                              disk: disk,
-                              color: TowerWidget.diskColors[disk - 1],
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18,width: 16),
-                  Container(
-                    width: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: _isHovering ? Colors.lightGreen.withAlpha(160) : Colors.transparent, // 當有 disk 拖曳到此塔時，背景變成淺綠色
-                      borderRadius: BorderRadius.circular(8), // 設定圓角
-                    ),
-                    // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: isShuffling
-                        ? FadeTransition(
-                      opacity: _blinkController!,
-                      child: Text(
-                        widget.tower.name,
-                        style: TextStyle(fontSize: 20, color: Colors.red),
+            decoration: BoxDecoration(
+              color:
+                  _isDragging
+                      ? Colors.grey.withAlpha((0.3 * 255).toInt())
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(width: 10, height: 200, color: Colors.grey),
+                      // ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children:
+                            widget.tower.disks.map((disk) {
+                              return DiskWidget(
+                                disk: disk,
+                                color: TowerWidget.diskColors[disk - 1],
+                              );
+                            }).toList(),
                       ),
-                    )
-                        : Text(
-                      widget.tower.name,
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    ],
                   ),
-                ],
-              )
-
-
-
+                ),
+                SizedBox(height: 18, width: 16),
+                Container(
+                  width: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color:
+                        _isHovering
+                            ? Colors.lightGreen.withAlpha(160)
+                            : Colors.transparent, // 當有 disk 拖曳到此塔時，背景變成淺綠色
+                    borderRadius: BorderRadius.circular(8), // 設定圓角
+                  ),
+                  child:
+                      viewModel.isShuffling
+                          ? FadeTransition(
+                            opacity: _blinkController!,
+                            child: Text(
+                              widget.tower.name,
+                              style: TextStyle(fontSize: 20, color: Colors.red),
+                            ),
+                          )
+                          : Text(
+                            widget.tower.name,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -217,14 +235,13 @@ class _TowerWidgetState extends State<TowerWidget>
         final incomingTower = details.data;
         if (incomingTower.disks.isEmpty) return false;
         final movingDisk = incomingTower.disks.first;
-        bool canAccept = widget.tower.disks.isEmpty || movingDisk < widget.tower.disks.last;
-
+        bool canAccept =
+            widget.tower.disks.isEmpty || movingDisk < widget.tower.disks.last;
         if (canAccept && widget.tower.name != incomingTower.name) {
           setState(() {
             _isHovering = true; // 當拖曳到此塔上時，背景變成淺綠色
           });
         }
-
         return canAccept;
       },
       onAcceptWithDetails: (DragTargetDetails<Tower> details) {
@@ -246,7 +263,6 @@ class _TowerWidgetState extends State<TowerWidget>
 class DiskWidget extends StatelessWidget {
   final int disk;
   final Color color;
-
   const DiskWidget({super.key, required this.disk, required this.color});
 
   @override
