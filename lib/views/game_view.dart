@@ -32,8 +32,8 @@ class GameView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('關卡: ${viewModel.currentLevel}'),
-                    Text('步數: ${viewModel.moveCount}'),
+                    Text('關卡: ${viewModel.currentLevel}', style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
+                    Text('步數: ${viewModel.moveCount}', style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
                   ],
                 ),
               ),
@@ -45,7 +45,6 @@ class GameView extends StatelessWidget {
                     style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 ),
-
               Expanded(
                 child: Center(
                   child: Row(
@@ -89,6 +88,7 @@ class TowerWidget extends StatefulWidget {
 class _TowerWidgetState extends State<TowerWidget>
     with SingleTickerProviderStateMixin {
   bool _isDragging = false;
+  bool _isHovering = false; // 追蹤是否有 disk 正在拖曳到此塔
   AnimationController? _blinkController;
   Offset? _diskPosition;
 
@@ -151,11 +151,13 @@ class _TowerWidgetState extends State<TowerWidget>
           },
           child: Container(
             width: 100,
-            height: 250,
-            color:
-                _isDragging
+            height: 300,
+              decoration: BoxDecoration(
+                color: _isDragging
                     ? Colors.grey.withAlpha((0.3 * 255).toInt())
                     : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
             child:Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -165,7 +167,7 @@ class _TowerWidgetState extends State<TowerWidget>
                       children: [
                          Container(
                             width: 10,
-                            height: 220,
+                            height: 200,
                             color: Colors.grey,
                           ),
                         // ),
@@ -178,21 +180,30 @@ class _TowerWidgetState extends State<TowerWidget>
                             );
                           }).toList(),
                         ),
-                        // if (!_isDragging )
                       ],
                     ),
                   ),
-                  isShuffling
-                      ? FadeTransition(
-                    opacity: _blinkController!,
-                    child: Text(
-                      widget.tower.name,
-                      style: TextStyle(fontSize: 20, color: Colors.red),
+                  SizedBox(height: 18,width: 16),
+                  Container(
+                    width: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _isHovering ? Colors.lightGreen.withAlpha(160) : Colors.transparent, // 當有 disk 拖曳到此塔時，背景變成淺綠色
+                      borderRadius: BorderRadius.circular(8), // 設定圓角
                     ),
-                  )
-                      : Text(
-                    widget.tower.name,
-                    style: TextStyle(fontSize: 20),
+                    // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: isShuffling
+                        ? FadeTransition(
+                      opacity: _blinkController!,
+                      child: Text(
+                        widget.tower.name,
+                        style: TextStyle(fontSize: 20, color: Colors.red),
+                      ),
+                    )
+                        : Text(
+                      widget.tower.name,
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
                 ],
               )
@@ -204,15 +215,29 @@ class _TowerWidgetState extends State<TowerWidget>
       },
       onWillAcceptWithDetails: (DragTargetDetails<Tower> details) {
         final incomingTower = details.data;
-        print("details.data: ${details.data}");
         if (incomingTower.disks.isEmpty) return false;
         final movingDisk = incomingTower.disks.first;
-        return widget.tower.disks.isEmpty ||
-            movingDisk < widget.tower.disks.last;
+        bool canAccept = widget.tower.disks.isEmpty || movingDisk < widget.tower.disks.last;
+
+        if (canAccept && widget.tower.name != incomingTower.name) {
+          setState(() {
+            _isHovering = true; // 當拖曳到此塔上時，背景變成淺綠色
+          });
+        }
+
+        return canAccept;
       },
       onAcceptWithDetails: (DragTargetDetails<Tower> details) {
         final incomingTower = details.data;
         viewModel.moveDisk(incomingTower.name, widget.tower.name);
+        setState(() {
+          _isHovering = false; // 放下後恢復背景顏色
+        });
+      },
+      onLeave: (data) {
+        setState(() {
+          _isHovering = false; // 當拖曳的 disk 離開此塔時，背景顏色恢復
+        });
       },
     );
   }
