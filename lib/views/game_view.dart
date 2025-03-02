@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/game_view_model.dart';
-import 'package:hanoi_tower/models/tower.dart';
+import '../models/tower.dart';
 
 class GameView extends StatelessWidget {
   const GameView({super.key});
@@ -10,7 +10,7 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tower of Hanoi'),
+        title: Text('Hanoi Tower Hell'),
         actions: [
           IconButton(
             icon: Icon(Icons.list),
@@ -37,30 +37,28 @@ class GameView extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(
-                child: Center(
-                  // 使用 Center 確保垂直居中
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:
-                        viewModel.towers.map((tower) {
-                          return TowerWidget(tower: tower);
-                        }).toList(),
-                  ),
-                ),
-              ),
-
               if (viewModel.shuffleCount > 0 && viewModel.shuffleCount <= 3)
-                Padding(
-                  padding: EdgeInsets.all(8.0),
+                Positioned(
+                  top: 50, // 固定位置
                   child: Text(
                     '🔄 柱子正在隨機交換！',
                     style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 ),
-              Spacer(flex: 1), // 添加彈性空間在頂部
+
+              Expanded(
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: viewModel.towers.map((tower) {
+                      return TowerWidget(tower: tower);
+                    }).toList(),
+                  ),
+                ),
+              ),
             ],
           );
+
         },
       ),
     );
@@ -114,7 +112,7 @@ class _TowerWidgetState extends State<TowerWidget>
     final viewModel = Provider.of<GameViewModel>(context);
     final isShuffling =
         viewModel.shuffleCount > 0 && viewModel.shuffleCount <= 3;
-    print(widget.tower);
+
     return DragTarget<Tower>(
       builder: (context, accepted, rejected) {
         return Draggable<Tower>(
@@ -122,7 +120,8 @@ class _TowerWidgetState extends State<TowerWidget>
           feedback: Material(
             color: Colors.transparent,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.tower.disks.isNotEmpty)
                   DiskWidget(
@@ -150,62 +149,84 @@ class _TowerWidgetState extends State<TowerWidget>
           },
           child: Container(
             width: 100,
+            height: 400,
             color:
                 _isDragging
                     ? Colors.grey.withAlpha((0.3 * 255).toInt())
                     : Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children:
+            child:Transform.translate(
+              offset: Offset(0,-120),
+              child:Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            bottom: 0, // 讓柱子靠近底部
+                            child: Container(
+                              width: 10,
+                              height: 200,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children:
                             widget.tower.disks.map((disk) {
                               return DiskWidget(
                                 disk: disk,
                                 color: TowerWidget.diskColors[disk - 1],
                               );
                             }).toList(),
-                      ),
-                      if (_isDragging &&
-                          _diskPosition != null &&
-                          widget.tower.disks.isNotEmpty)
-                        Positioned(
-                          bottom: _diskPosition!.dy,
-                          child: DiskWidget(
-                            disk: widget.tower.disks.last,
-                            color:
-                                TowerWidget.diskColors[widget.tower.disks.last -
-                                    1],
                           ),
-                        ),
-                    ],
+                          if (_isDragging &&
+                              _diskPosition != null &&
+                              widget.tower.disks.isNotEmpty)
+                            Positioned(
+                              bottom: _diskPosition!.dy,
+                              child: DiskWidget(
+                                disk: widget.tower.disks.first,
+                                color:
+                                TowerWidget.diskColors[widget.tower.disks.first -
+                                    1],
+                              ),
+                            ),
+
+                        ],
+
+                      ),
                   ),
-                ),
-                Container(width: 10, height: 100, color: Colors.grey),
-                if (isShuffling)
-                  FadeTransition(
-                    opacity: _blinkController!,
-                    child: Text(
+                  Positioned(
+                    bottom: 0,
+                    child:
+                    isShuffling
+                        ? FadeTransition(
+                      opacity: _blinkController!,
+                      child: Text(
+                        widget.tower.name,
+                        style: TextStyle(fontSize: 20, color: Colors.red),
+                      ),
+                    )
+                        : Text(
                       widget.tower.name,
-                      style: TextStyle(fontSize: 20, color: Colors.red),
+                      style: TextStyle(fontSize: 20),
                     ),
                   )
-                else
-                  Text(widget.tower.name, style: TextStyle(fontSize: 20)),
-              ],
-            ),
+                ],
+              )
+
+            )
+
           ),
         );
       },
       onWillAcceptWithDetails: (DragTargetDetails<Tower> details) {
         final incomingTower = details.data;
+        print("details.data: ${details.data}");
         if (incomingTower.disks.isEmpty) return false;
-        final movingDisk = incomingTower.disks.last;
+        final movingDisk = incomingTower.disks.first;
         return widget.tower.disks.isEmpty ||
             movingDisk < widget.tower.disks.last;
       },
@@ -225,8 +246,7 @@ class DiskWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
+    return Container(
       width: disk * 20.0,
       height: 20.0,
       margin: EdgeInsets.symmetric(vertical: 2.0),

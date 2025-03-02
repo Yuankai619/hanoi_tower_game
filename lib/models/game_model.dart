@@ -23,16 +23,19 @@ class GameModel {
   void moveDisk(String from, String to) {
     var fromTower = towers.firstWhere((tower) => tower.name == from);
     var toTower = towers.firstWhere((tower) => tower.name == to);
-
+    print("fromTower: ${fromTower.disks}, ToTower: ${toTower.disks}");
     if (fromTower.disks.isNotEmpty &&
-        (toTower.disks.isEmpty || fromTower.disks.last < toTower.disks.last)) {
-      toTower.disks.add(fromTower.disks.removeLast());
+        (toTower.disks.isEmpty || fromTower.disks.first < toTower.disks.first)) {
+      toTower.disks.insert(0,fromTower.disks.removeAt(0));
       moveCount++;
     }
+
   }
 
   bool isLevelComplete() {
-    return towers.last.disks.length == currentLevel && towers.last.name == 'C';
+    var targetTower = towers.firstWhere((tower) => tower.name == 'C');
+    return targetTower.disks.length == currentLevel &&
+        targetTower.disks.every((disk) => disk == targetTower.disks.indexOf(disk) + 1);
   }
 
   void nextLevel() {

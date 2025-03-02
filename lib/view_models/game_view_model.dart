@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/game_model.dart';
-import 'package:hanoi_tower/models/tower.dart';
+import '../models/tower.dart';
 
 class GameViewModel extends ChangeNotifier {
   final GameModel _gameModel;
@@ -24,14 +24,15 @@ class GameViewModel extends ChangeNotifier {
       } else {
         _gameModel.nextLevel();
       }
-    } else if (_gameModel.shuffleCount < 3 &&
-        _gameModel.random.nextInt(10) == 0) {
-      _gameModel.shuffleTowers();
-      notifyListeners();
-      Future.delayed(Duration(seconds: 2), () {
-        notifyListeners();
-      });
     }
+    // else if (_gameModel.shuffleCount < 3 &&
+    //     _gameModel.random.nextInt(10) == 0) {
+    //   _gameModel.shuffleTowers();
+    //   notifyListeners();
+    //   Future.delayed(Duration(seconds: 2), () {
+    //     notifyListeners();
+    //   });
+    // }
     notifyListeners();
   }
 
