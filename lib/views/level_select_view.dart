@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../view_models/game_view_model.dart';
 
 class LevelSelectView extends StatelessWidget {
@@ -16,7 +17,15 @@ class LevelSelectView extends StatelessWidget {
         itemBuilder: (context, index) {
           final level = index + 1;
           return ListTile(
-            title: Text('關卡 $level'),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('關卡 $level'),
+                if (viewModel.currentLevel >= level &&
+                    viewModel.moveRecord[level] > 0)
+                  Text('步數 ${viewModel.moveRecord[level]}'),
+              ],
+            ),
             enabled: level <= viewModel.unlockedLevels,
             onTap: () {
               viewModel.setLevel(level);
