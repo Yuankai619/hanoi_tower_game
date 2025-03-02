@@ -9,25 +9,33 @@ class GameViewModel extends ChangeNotifier {
   GameViewModel(this._gameModel);
 
   List<Tower> get towers => _gameModel.towers;
+  List<int> get moveRecord => _gameModel.moveRecord;
   int get currentLevel => _gameModel.currentLevel;
   int get moveCount => _gameModel.moveCount;
   int get maxLevel => _gameModel.maxLevel;
   int get unlockedLevels => _gameModel.unlockedLevels;
   int get shuffleCount => _gameModel.shuffleCount;
   bool get isShuffling => _gameModel.isShuffling;
+  bool get isShowLevelComplete => _gameModel.isShowLevelComplete;
+
+  set isShowLevelComplete(bool state) => _gameModel.isShowLevelComplete = state;
+
+  void nextLevel() {
+    _gameModel.nextLevel();
+    notifyListeners();
+  }
+
   void moveDisk(String from, String to) {
     _gameModel.moveDisk(from, to);
     if (_gameModel.isLevelComplete()) {
+      _gameModel.isShowLevelComplete = true;
+
       if (_gameModel.currentLevel == _gameModel.maxLevel) {
-        Future.delayed(Duration(milliseconds: 500), () {
-          navigateToGameOver();
-        });
-      } else {
-        _gameModel.nextLevel();
-      }
+        navigateToGameOver();
+        notifyListeners();
+      } else {}
     } else if (_gameModel.shuffleCount < 3 &&
-        _gameModel.random.nextInt(1) == 0) {
-      print("觸發交換");
+        _gameModel.random.nextInt(5) == 0) {
       _gameModel.isShuffling = true;
       _gameModel.shuffleTowers();
       notifyListeners();

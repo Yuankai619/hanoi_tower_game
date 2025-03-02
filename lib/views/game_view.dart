@@ -21,11 +21,44 @@ class GameView extends StatelessWidget {
       ),
       body: Consumer<GameViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.currentLevel > viewModel.maxLevel) {
+          if (viewModel.currentLevel == viewModel.maxLevel &&
+              viewModel.isShowLevelComplete) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pushNamed(context, '/game_over');
             });
+          } else if (viewModel.isShowLevelComplete) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showDialog(
+                context: context,
+                barrierDismissible: false, // 防止點擊外部關閉
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('完成此關'),
+                    content: Text('步數: ${viewModel.moveCount}'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          viewModel.resetGame();
+                          viewModel.isShowLevelComplete = false;
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('重新開始遊戲'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          viewModel.isShowLevelComplete = false;
+                          Navigator.of(context).pop();
+                          viewModel.nextLevel();
+                        },
+                        child: Text('下一關'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            });
           }
+
           return Stack(
             children: [
               Column(

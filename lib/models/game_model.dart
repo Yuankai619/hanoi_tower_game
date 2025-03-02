@@ -4,6 +4,7 @@ import 'tower.dart';
 
 class GameModel {
   List<Tower> towers;
+  List<int> moveRecord;
   int currentLevel;
   int moveCount;
   int maxLevel;
@@ -11,8 +12,10 @@ class GameModel {
   int unlockedLevels;
   int shuffleCount;
   bool isShuffling;
+  bool isShowLevelComplete;
   GameModel({
     required this.towers,
+    this.moveRecord = const [],
     required this.currentLevel,
     required this.moveCount,
     required this.maxLevel,
@@ -20,7 +23,10 @@ class GameModel {
     required this.unlockedLevels,
     required this.shuffleCount,
     required this.isShuffling,
-  });
+    required this.isShowLevelComplete,
+  }) {
+    moveRecord = List.filled(maxLevel + 1, 0, growable: true);
+  }
 
   void moveDisk(String from, String to) {
     var fromTower = towers.firstWhere((tower) => tower.name == from);
@@ -43,6 +49,7 @@ class GameModel {
   }
 
   void nextLevel() {
+    moveRecord[currentLevel] = moveCount;
     if (currentLevel < maxLevel) {
       currentLevel++;
       unlockedLevels =
@@ -60,9 +67,23 @@ class GameModel {
     moveCount = 0;
   }
 
+  bool _isSameOrder(List<Tower> original, List<Tower> shuffled) {
+    for (int i = 0; i < original.length; i++) {
+      if (original[i] != shuffled[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void shuffleTowers() {
     if (shuffleCount < 3) {
-      towers.shuffle(random);
+      List<Tower> originalOrder = List.from(towers); // 記錄原始順序
+
+      do {
+        towers.shuffle(random); // 重新排列
+      } while (_isSameOrder(originalOrder, towers)); // 確保與原來不同
+
       shuffleCount++;
     }
   }
@@ -71,6 +92,7 @@ class GameModel {
     currentLevel = 2;
     unlockedLevels = 2;
     shuffleCount = 0;
+    isShowLevelComplete = false;
     resetTowers();
   }
 }

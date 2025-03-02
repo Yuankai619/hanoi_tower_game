@@ -28,6 +28,7 @@ void main() {
               unlockedLevels: 2,
               shuffleCount: 0,
               isShuffling: false,
+              isShowLevelComplete: false,
             ),
           ),
       child: MyApp(),
