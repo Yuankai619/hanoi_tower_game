@@ -1,16 +1,35 @@
-# hanoi_tower
+# **Hanoi Tower Game - Flutter**
 
-A new Flutter project.
+## Demo 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/jrWedYa7Ydg/0.jpg)](https://www.youtube.com/watch?v=jrWedYa7Ydg)
+## **🎮 Game Overview**
+Hanoi Tower is a classic puzzle game where the goal is to move all disks from the first rod (A) to the third rod (C), following these rules:
 
-## Getting Started
+1. **Only one disk can be moved at a time.**
+2. **A larger disk cannot be placed on top of a smaller disk.**
+3. **All disks must be moved to the third rod (C) to complete the level.**
 
-This project is a starting point for a Flutter application.
+Each level increases the number of disks, making the challenge progressively harder!
 
-A few resources to get you started if this is your first Flutter project:
+## **📌 Features**
+- **Interactive Drag & Drop:** Move disks smoothly between rods.
+- **Progressive Levels:** Start with **2 disks** and progress up to **10 disks**.
+- **Random Rod Swap Mechanic:** Rods may swap positions randomly up to **3 times per game**, adding a new level of challenge.
+- **Smooth Animations & UI:** Clear visual indicators with unique disk colors and labeled rods (A, B, C).
+- **Game Statistics:** Track your current level and number of moves.
+- **Level Selection:** Easily replay unlocked levels from the menu.
+- **Game Completion Screen:** View total moves upon completing the final level and choose to restart.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## **🚀 How to Play**
+1. **Tap & Drag** a disk to another rod.
+2. **Follow the rules** – only move one disk at a time and never place a larger disk on a smaller one.
+3. **Solve the puzzle** by transferring all disks to the third rod (C).
+4. **Advance to the next level** after completing the current one.
+5. Watch out for **random rod swaps** that shuffle the positions of A, B, and C!
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## **🛠️ Tech Stack**
+- **Flutter & Dart** for cross-platform development
+- **MVVM** for game state architecture
+
+## Medium blog
+https://medium.com/@lyuankai/flutter-小遊戲-hanoi-tower-hell-7a432ea87332
